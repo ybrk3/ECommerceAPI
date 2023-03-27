@@ -27,6 +27,6 @@ namespace ECommerceAPI.Persistence.Repositories
         public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate)
             => await Table.FirstOrDefaultAsync(predicate);
         public async Task<T> GetByIdAsync(string id)
-            => await Table.FirstOrDefaultAsync(data=> data.Id==Guid.Parse(id)); //we reached id property through marker base class which is BaseEntity
+            => await Table.FindAsync(id); //we reached id property through marker base class which is BaseEntity
     }
 }

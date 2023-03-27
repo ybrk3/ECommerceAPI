@@ -1,4 +1,6 @@
-﻿using ECommerceAPI.Persistence.Contexts;
+﻿using ECommerceAPI.Application.Repositories;
+using ECommerceAPI.Persistence.Contexts;
+using ECommerceAPI.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -15,6 +17,12 @@ namespace ECommerceAPI.Persistence
         {
             //As per DB to be used, Registers the Context as a service in IServiceCollection. 
             services.AddDbContext<ECommerceAPIDbContext>(options => options.UseNpgsql(Configuration.ConnectionString));
+            services.AddScoped<ICustomerReadRepository, CustomerReadRepository> ();
+            services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository> ();
+            services.AddScoped<IProductReadRepository, ProductReadRepository>();
+            services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
+            services.AddScoped<IOrderReadRepository, OrderReadRepository>();
+            services.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
         }
     }
 }
