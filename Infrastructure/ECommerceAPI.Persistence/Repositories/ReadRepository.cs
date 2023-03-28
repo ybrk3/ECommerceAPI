@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Persistence.Repositories
 {
+    //"No-tracking query" option added to increase performance
     public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
     {
         private readonly ECommerceAPIDbContext _context;
@@ -21,12 +22,35 @@ namespace ECommerceAPI.Persistence.Repositories
 
         public DbSet<T> Table => _context.Set<T>();
 
-        public IQueryable<T> GetAll() => Table;
-        public IQueryable<T> GetWhere(Expression<Func<T, bool>> predicate)
-            => Table.Where(predicate);
-        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate)
-            => await Table.FirstOrDefaultAsync(predicate);
-        public async Task<T> GetByIdAsync(string id)
-            => await Table.FindAsync(id); //we reached id property through marker base class which is BaseEntity
+        public IQueryable<T> GetAll(bool tracking)
+        {
+            IQueryable<T> query = Table.AsQueryable<T>();
+            if (!tracking)
+                query.AsNoTracking();
+            return query;
+        }
+        public IQueryable<T> GetWhere(Expression<Func<T, bool>> predicate, bool tracking)
+        {
+            IQueryable<T> query = Table.Where(predicate);
+            if (!tracking)
+                query.AsNoTracking();
+            return query;
+        }
+
+        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool tracking)
+        {
+            IQueryable<T> query = Table.AsQueryable<T>();
+            if (!tracking)
+                query.AsNoTracking();
+            return await query.FirstOrDefaultAsync(predicate);
+        }
+        public async Task<T> GetByIdAsync(string id, bool tracking)
+        { 
+            IQueryable<T> query=Table.AsQueryable<T>();
+            if (!tracking)
+                query.AsNoTracking();
+            return await query.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id));//we reached id property through marker base class which is BaseEntity
+
+        }
     }
 }
