@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace ECommerceAPI.Persistence
 {
     //Avoid the error at design time while migrating the context through CLI commands 
-    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ECommerceAPIDbContext>
+    public sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ECommerceAPIDbContext>
     {
         public ECommerceAPIDbContext CreateDbContext(string[] args)
         {

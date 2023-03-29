@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Persistence.Repositories
 {
-    public class CustomerReadRepository : ReadRepository<Customer>, ICustomerReadRepository
+    public sealed class CustomerReadRepository : ReadRepository<Customer>, ICustomerReadRepository
     {
         public CustomerReadRepository(ECommerceAPIDbContext context) : base(context)
         {

@@ -18,7 +18,7 @@ namespace ECommerceAPI.API.Controllers
             _productWriteRepository = productWriteRepository;
         }
 
-        [HttpGet]
+        [HttpGet("id")]
         public async Task GetByIdAsync(string id)
         {
             Product product= await  _productReadRepository.GetByIdAsync(id, false);
