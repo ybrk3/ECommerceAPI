@@ -1,4 +1,5 @@
 ﻿using ECommerceAPI.Domain.Entities;
+using ECommerceAPI.Domain.Entities.Common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,24 @@ namespace ECommerceAPI.Persistence.Contexts
         public DbSet<Product> Products { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            //get all changes made through BaseEntity which makes it generic
+            var metadatas = ChangeTracker.Entries<BaseEntity>();
+
+            //checks each data and if there is any modification/insert, it will authomatically add related datas to Entities modified/inserted to db
+            foreach (var data in metadatas)
+            {
+                _ = data.State switch
+                {
+                    EntityState.Added => data.Entity.CreatedDate = DateTime.UtcNow,
+                    EntityState.Modified => data.Entity.CreatedDate = DateTime.UtcNow
+                };
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
+        }
 
     }
 }
