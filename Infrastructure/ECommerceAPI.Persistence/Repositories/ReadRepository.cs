@@ -22,14 +22,14 @@ namespace ECommerceAPI.Persistence.Repositories
 
         public DbSet<T> Table => _context.Set<T>();
 
-        public IQueryable<T> GetAll(bool tracking)
+        public IQueryable<T> GetAll(bool tracking=true)
         {
             IQueryable<T> query = Table.AsQueryable<T>();
             if (!tracking)
                 query.AsNoTracking();
             return query;
         }
-        public IQueryable<T> GetWhere(Expression<Func<T, bool>> predicate, bool tracking)
+        public IQueryable<T> GetWhere(Expression<Func<T, bool>> predicate, bool tracking = true)
         {
             IQueryable<T> query = Table.Where(predicate);
             if (!tracking)
@@ -37,14 +37,14 @@ namespace ECommerceAPI.Persistence.Repositories
             return query;
         }
 
-        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool tracking)
+        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool tracking = true)
         {
             IQueryable<T> query = Table.AsQueryable<T>();
             if (!tracking)
                 query.AsNoTracking();
             return await query.FirstOrDefaultAsync(predicate);
         }
-        public async Task<T> GetByIdAsync(string id, bool tracking)
+        public async Task<T> GetByIdAsync(string id, bool tracking = true)
         { 
             IQueryable<T> query=Table.AsQueryable<T>();
             if (!tracking)

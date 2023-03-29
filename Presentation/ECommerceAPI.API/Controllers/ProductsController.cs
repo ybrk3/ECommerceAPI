@@ -11,6 +11,8 @@ namespace ECommerceAPI.API.Controllers
     {
         readonly private IProductReadRepository _productReadRepository;
         readonly private IProductWriteRepository _productWriteRepository;
+        readonly private ICustomerReadRepository _customerReadRepository;
+        readonly private ICustomerWriteRepository _customerWriteRepository;
 
         public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository)
         {
@@ -18,15 +20,12 @@ namespace ECommerceAPI.API.Controllers
             _productWriteRepository = productWriteRepository;
         }
 
-        [HttpGet("id")]
-        public async Task GetByIdAsync(string id)
+        [HttpGet]
+        public async Task get()
         {
-            Product product= await  _productReadRepository.GetByIdAsync(id, false);
-            product.Name = "NoTracking";
+            var product = await _productReadRepository.GetByIdAsync("48bc1e3b-d863-4d6e-a857-a32d1d5b9180");
+            product.Name = "Newly_Named_Product";
             await _productWriteRepository.SaveAsync();
-            
         }
-
-        
     }
 }
