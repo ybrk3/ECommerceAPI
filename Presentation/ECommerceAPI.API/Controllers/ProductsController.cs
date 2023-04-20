@@ -1,7 +1,9 @@
 ﻿using ECommerceAPI.Application.Repositories;
+using ECommerceAPI.Application.ViewModels.Products;
 using ECommerceAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace ECommerceAPI.API.Controllers
 {
@@ -11,8 +13,6 @@ namespace ECommerceAPI.API.Controllers
     {
         readonly private IProductReadRepository _productReadRepository;
         readonly private IProductWriteRepository _productWriteRepository;
-        readonly private ICustomerReadRepository _customerReadRepository;
-        readonly private ICustomerWriteRepository _customerWriteRepository;
 
         public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository)
         {
@@ -21,11 +21,50 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpGet]
-        public async Task get()
+        public async Task<IActionResult> GetAllProducts()
         {
-            var product = await _productReadRepository.GetByIdAsync("48bc1e3b-d863-4d6e-a857-a32d1d5b9180");
-            product.Name = "Newly_Named_Product";
+            return Ok(_productReadRepository.GetAll(false));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
+        {
+
+            return Ok(_productReadRepository.GetByIdAsync(id, false));
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Post(VM_Create_Product model)
+        {
+            await _productWriteRepository.AddAsync(new Product
+            {
+                Name = model.Name,
+                Stock = model.Stock,
+                Price = model.Price,
+            });
             await _productWriteRepository.SaveAsync();
+            return StatusCode((int)HttpStatusCode.Created);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Put(VM_Update_Product model)
+        {
+            Product productToUpdate = await _productReadRepository.GetByIdAsync(model.Id);
+            productToUpdate.Name = model.Name;
+            productToUpdate.Stock = model.Stock;
+            productToUpdate.Price = model.Price;
+            await _productWriteRepository.SaveAsync();
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _productWriteRepository.Remove(id);
+            await _productWriteRepository.SaveAsync();
+            return Ok();
+
         }
     }
 }

@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.5.2" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\ECommerceAPI.Application\ECommerceAPI.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ECommerceAPI.Infrastructure\ECommerceAPI.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ECommerceAPI.Persistence\ECommerceAPI.Persistence.csproj" />
   </ItemGroup>
 
