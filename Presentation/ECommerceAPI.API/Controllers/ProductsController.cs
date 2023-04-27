@@ -1,4 +1,5 @@
 ﻿using ECommerceAPI.Application.Repositories;
+using ECommerceAPI.Application.RequestParameters;
 using ECommerceAPI.Application.ViewModels.Products;
 using ECommerceAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -13,17 +14,23 @@ namespace ECommerceAPI.API.Controllers
     {
         readonly private IProductReadRepository _productReadRepository;
         readonly private IProductWriteRepository _productWriteRepository;
-
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository)
+        readonly private IWebHostEnvironment _webHostEnvironment;
+        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
+            _webHostEnvironment = webHostEnvironment; //to get the path of wwwroot
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> GetAllProducts([FromQuery] Pagination pagination)
+
         {
-            return Ok(_productReadRepository.GetAll(false));
+            var totalCount = _productReadRepository.GetAll(false).Count();
+            var products = _productReadRepository.GetAll(false).Skip(pagination.Page * pagination.Size).Take(pagination.Size).Select(p => new
+            { p.Id, p.Name, p.Stock, p.Price, p.CreatedDate, p.UpdatedDate });
+
+            return Ok(new { totalCount, products });
         }
 
         [HttpGet("{id}")]
@@ -65,6 +72,31 @@ namespace ECommerceAPI.API.Controllers
             await _productWriteRepository.SaveAsync();
             return Ok();
 
+        }
+
+        //There are more than 1 post functions here, that's Why we differentiate it by "[action]"
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Upload()
+        {
+            //creating folders under wwwroot => //wwwroot/resources/product-images
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resources/product-images");
+
+            //If there is no directory in the location of uploadPath, below creates
+            if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
+
+
+            Random r = new Random();
+            foreach (IFormFile file in Request.Form.Files)
+            {
+                //creating path for each file with random number before its extension
+                string fullPath = Path.Combine(uploadPath, $"{r.Next()}{Path.GetExtension(file.FileName)}");
+
+                using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
+                await file.CopyToAsync(fileStream); //each file streamed
+                await fileStream.FlushAsync(); //closing the file stream
+            }
+
+            return Ok();
         }
     }
 }
