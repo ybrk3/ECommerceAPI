@@ -1,7 +1,12 @@
-﻿using ECommerceAPI.Application.Repositories;
+﻿using ECommerceAPI.Application.Abstractions.Storage;
+using ECommerceAPI.Application.Repositories;
+using ECommerceAPI.Application.Repositories.File;
+using ECommerceAPI.Application.Repositories.Image;
+using ECommerceAPI.Application.Repositories.Invoice;
 using ECommerceAPI.Application.RequestParameters;
 using ECommerceAPI.Application.ViewModels.Products;
 using ECommerceAPI.Domain.Entities;
+using ECommerceAPI.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -15,11 +20,20 @@ namespace ECommerceAPI.API.Controllers
         readonly private IProductReadRepository _productReadRepository;
         readonly private IProductWriteRepository _productWriteRepository;
         readonly private IWebHostEnvironment _webHostEnvironment;
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment)
+        readonly private IImageFileEntityWriteRepository _imageFileEntityWriteRepository;
+        readonly private IInvoiceFileWriteRepository _invoiceFileWriteRepository;
+        readonly private IFileEntityWriteRepository _fileEntityWriteRepository;
+        readonly private IStorageService _storageService;
+        public ProductsController(
+            IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IImageFileEntityWriteRepository imageFileEntityWriteRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IFileEntityWriteRepository fileEntityWriteRepository, IStorageService storageService)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
             _webHostEnvironment = webHostEnvironment; //to get the path of wwwroot
+            _imageFileEntityWriteRepository = imageFileEntityWriteRepository;
+            _invoiceFileWriteRepository = invoiceFileWriteRepository;
+            _fileEntityWriteRepository = fileEntityWriteRepository;
+            _storageService = storageService;
         }
 
         [HttpGet]
@@ -78,24 +92,35 @@ namespace ECommerceAPI.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload()
         {
-            //creating folders under wwwroot => //wwwroot/resources/product-images
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resources/product-images");
-
-            //If there is no directory in the location of uploadPath, below creates
-            if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
-
-
-            Random r = new Random();
-            foreach (IFormFile file in Request.Form.Files)
+            //var datas = await _fileService.UploadAsync("resources/product-images", Request.Form.Files);
+            /* await _imageFileEntityWriteRepository.AddRangeAsync(datas.Select(d => new ImageFile()
+             {
+                 FileName = d.fileName,
+                 Path = d.path
+             }).ToList());*/
+            /*await _invoiceFileWriteRepository.AddRangeAsync(datas.Select(d => new InvoiceFile()
             {
-                //creating path for each file with random number before its extension
-                string fullPath = Path.Combine(uploadPath, $"{r.Next()}{Path.GetExtension(file.FileName)}");
+                FileName = d.fileName,
+                Path = d.path,
+                Price = new Random().Next()
+            }).ToList());*/
+            /* await _fileEntityWriteRepository.AddRangeAsync(datas.Select(d => new FileEntity()
+             {
+                 FileName = d.fileName,
+                 Path = d.path,
+             }).ToList());
 
-                using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
-                await file.CopyToAsync(fileStream); //each file streamed
-                await fileStream.FlushAsync(); //closing the file stream
-            }
+             await _imageFileEntityWriteRepository.SaveAsync();*/
 
+            var datas = await _storageService.UploadAsync("resources/product-images", Request.Form.Files);
+            await _imageFileEntityWriteRepository.AddRangeAsync(datas.Select(d => new ImageFile()
+            {
+                FileName = d.fileName,
+                Path = d.pathOrContainerName,
+                Storage = _storageService.StorageName
+            }).ToList()); ;
+
+            await _imageFileEntityWriteRepository.SaveAsync();
             return Ok();
         }
     }

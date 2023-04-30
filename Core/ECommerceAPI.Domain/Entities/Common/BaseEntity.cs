@@ -10,6 +10,8 @@ namespace ECommerceAPI.Domain.Entities.Common
     {
         public Guid Id { get; set; }
         public DateTime CreatedDate { get; set; }
+
+        //not to be used in some entities
         virtual public DateTime? UpdatedDate { get; set; }
     }
 }

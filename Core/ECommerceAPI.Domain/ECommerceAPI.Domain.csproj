@@ -6,4 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="D:\Coding\ECommerce_App\ECommerceAPI\Core\ECommerceAPI.Domain\Entities\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\Coding\ECommerce_App\ECommerceAPI\Core\ECommerceAPI.Domain\Entities\.editorconfig" />
+  </ItemGroup>
+
 </Project>

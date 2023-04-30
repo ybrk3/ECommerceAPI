@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Application.RequestParameters
 {
+    //It is for pagination in UI
     public record Pagination
     {
         public int Page { get; set; }
