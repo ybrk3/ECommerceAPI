@@ -18,8 +18,8 @@ namespace ECommerceAPI.Infrastructure
             service.AddScoped<IStorageService, StorageService>();
         }
 
-        //T must be class derived from IStorage (which are LocalStorage, AzureStorage etc.)
-        public static void AddStorage<T>(this IServiceCollection service) where T : class, IStorage
+        //T must be Storage class and derived from IStorage (which are LocalStorage, AzureStorage etc.)
+        public static void AddStorage<T>(this IServiceCollection service) where T : Storage, IStorage 
         {
             service.AddScoped<IStorage, T>();
         }

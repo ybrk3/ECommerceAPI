@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Infrastructure.Services.Storage.Local
 {
-    public class LocalStorage : ILocalStorage
+    public class LocalStorage : Storage, ILocalStorage
     {
         //to get local storage path and create folder if neccessary  wwwroot => //wwwroot/resources/product-images
         IWebHostEnvironment _webHostEnvironment;
@@ -58,8 +58,10 @@ namespace ECommerceAPI.Infrastructure.Services.Storage.Local
             List<(string fileName, string path)> datas = new();
             foreach (IFormFile file in files)
             {
-                await CopyFileAysnc($"{uploadPath}\\{file.Name}", file);
-                datas.Add((file.Name, $"{path}\\{file.Name}"));
+                string newFileName = await FileRenameAsync(uploadPath, file.Name, HasFile);
+
+                await CopyFileAysnc($"{uploadPath}\\{newFileName}", file);
+                datas.Add((newFileName, $"{path}\\{newFileName}"));
             }
             return datas;
         }
