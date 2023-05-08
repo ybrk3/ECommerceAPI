@@ -1,3 +1,4 @@
+using ECommerceAPI.Application;
 using ECommerceAPI.Application.Validators.Product;
 using ECommerceAPI.Infrastructure;
 using ECommerceAPI.Infrastructure.Filters;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
 
 //Add Storage Type
 builder.Services.AddStorage<AzureStorage>(); //when we use StorageService method it will get them from Azure storage

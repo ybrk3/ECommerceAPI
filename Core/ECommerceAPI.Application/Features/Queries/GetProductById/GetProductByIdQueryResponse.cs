@@ -1,14 +1,14 @@
-﻿using System;
+﻿using ECommerceAPI.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerceAPI.Application.ViewModels.Products
+namespace ECommerceAPI.Application.Features.Queries.GetProductById
 {
-    public abstract class VM_Update_Product
+    public class GetProductByIdQueryResponse
     {
-        public string Id { get; set; }
         public string Name { get; set; }
         public int Stock { get; set; }
         public float Price { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Application.ViewModels.Products
 {
-    public class VM_Create_Product
+    public abstract class VM_Create_Product
     {
         public string Name { get; set; }
         public int Stock { get; set; }

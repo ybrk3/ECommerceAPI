@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 namespace ECommerceAPI.Application.RequestParameters
 {
     //It is for pagination in UI
-    public record Pagination
+    public abstract class Pagination
     {
+        //It is used in GetAllProductsRequest
         public int Page { get; set; }
         public int Size { get; set; }
     }
