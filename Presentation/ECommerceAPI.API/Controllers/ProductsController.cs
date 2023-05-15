@@ -63,7 +63,6 @@ namespace ECommerceAPI.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAllProducts([FromQuery] GetAllProductsQueryRequest getAllProductsQueryRequest)
-
         {
             GetAllProductsQueryResponse response = await _mediator.Send(getAllProductsQueryRequest);
             return Ok(response);
@@ -79,7 +78,6 @@ namespace ECommerceAPI.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(CreateProductCommandRequest createProductCommandRequest)
         {
-
             await _mediator.Send(createProductCommandRequest);
             return StatusCode((int)HttpStatusCode.Created);
         }
@@ -91,7 +89,7 @@ namespace ECommerceAPI.API.Controllers
             return Ok();
         }
 
-        [HttpDelete("{Id}")] //same name should be used to match with request property 
+        [HttpDelete("{Id}")] 
         public async Task<IActionResult> Delete([FromRoute] DeleteProductCommandRequest deleteProductCommandRequest)
         {
             DeleteProductCommandResponse response = await _mediator.Send(deleteProductCommandRequest);
@@ -156,7 +154,6 @@ namespace ECommerceAPI.API.Controllers
         {
 
             List<GetProductImagesCommandResponse>  response=await _mediator.Send(getProductImagesCommandRequest);
-
             return Ok(response);
         }
 

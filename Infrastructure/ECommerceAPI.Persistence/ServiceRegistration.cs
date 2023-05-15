@@ -2,6 +2,7 @@
 using ECommerceAPI.Application.Repositories.File;
 using ECommerceAPI.Application.Repositories.Image;
 using ECommerceAPI.Application.Repositories.Invoice;
+using ECommerceAPI.Domain.Entities.Identity;
 using ECommerceAPI.Persistence.Contexts;
 using ECommerceAPI.Persistence.Repositories;
 using ECommerceAPI.Persistence.Repositories.File;
@@ -23,6 +24,10 @@ namespace ECommerceAPI.Persistence
         {
             //As per DB to be used, Registers the Context as a service in IServiceCollection. 
             services.AddDbContext<ECommerceAPIDbContext>(options => options.UseNpgsql(Configuration.ConnectionString));
+            services.AddIdentity<AppUser, AppRole>(option =>
+            {
+                option.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<ECommerceAPIDbContext>(); //If needed, password or other requirements can be altered through <AppUser,AppRole>(options=>{})
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
             services.AddScoped<IProductReadRepository, ProductReadRepository>();

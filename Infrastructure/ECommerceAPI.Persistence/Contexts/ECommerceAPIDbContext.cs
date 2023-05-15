@@ -1,5 +1,8 @@
 ﻿using ECommerceAPI.Domain.Entities;
 using ECommerceAPI.Domain.Entities.Common;
+using ECommerceAPI.Domain.Entities.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +12,9 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Persistence.Contexts
 {
-    public class ECommerceAPIDbContext : DbContext
+
+    //It was derived from DbContext however due to identity mechanism, IdentityDbContext is being used
+    public class ECommerceAPIDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
         //In order to make some adjustments/options while IoC Container is calling this Context
         public ECommerceAPIDbContext(DbContextOptions options) : base(options)
