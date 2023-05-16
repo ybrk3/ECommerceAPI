@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerceAPI.Application.Features.Commands.UsersCommands
+namespace ECommerceAPI.Application.Features.Commands.UsersCommands.CreateUser
 {
     public class CreateUserCommandRequest : IRequest<CreateUserCommandResponse>
     {
