@@ -13,6 +13,7 @@ using ECommerceAPI.Application.Repositories.Image;
 using ECommerceAPI.Application.Repositories.Invoice;
 using ECommerceAPI.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,42 +23,14 @@ namespace ECommerceAPI.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Admin")] //Only users who have "Admin" authorization, can use this controller
     public class ProductsController : ControllerBase
     {
-        readonly private IProductReadRepository _productReadRepository;
-        readonly private IProductWriteRepository _productWriteRepository;
-        readonly private IWebHostEnvironment _webHostEnvironment;
-        readonly private IImageFileEntityWriteRepository _imageFileEntityWriteRepository;
-        readonly private IInvoiceFileWriteRepository _invoiceFileWriteRepository;
-        readonly private IFileEntityWriteRepository _fileEntityWriteRepository;
-        readonly private IConfiguration _configuration;
-        IStorageService _storageService;
-        readonly private IImageFileEntityReadRepository _imageFileEntityReadRepository;
-        private IMediator _mediator;
 
+        private readonly IMediator _mediator;
 
-
-        public ProductsController(
-            IProductReadRepository productReadRepository,
-            IProductWriteRepository productWriteRepository,
-            IWebHostEnvironment webHostEnvironment,
-            IImageFileEntityWriteRepository imageFileEntityWriteRepository,
-            IConfiguration configuration,
-            IInvoiceFileWriteRepository invoiceFileWriteRepository,
-            IFileEntityWriteRepository fileEntityWriteRepository,
-            IStorageService storageService,
-            IImageFileEntityReadRepository imageFileEntityReadRepository,
-            IMediator mediator)
+        public ProductsController(IMediator mediator)
         {
-            _productReadRepository = productReadRepository;
-            _productWriteRepository = productWriteRepository;
-            _webHostEnvironment = webHostEnvironment; //to get the path of wwwroot
-            _imageFileEntityWriteRepository = imageFileEntityWriteRepository;
-            _invoiceFileWriteRepository = invoiceFileWriteRepository;
-            _fileEntityWriteRepository = fileEntityWriteRepository;
-            _storageService = storageService;
-            _configuration = configuration;
-            _imageFileEntityReadRepository = imageFileEntityReadRepository;
             _mediator = mediator;
         }
 
@@ -89,7 +62,7 @@ namespace ECommerceAPI.API.Controllers
             return Ok();
         }
 
-        [HttpDelete("{Id}")] 
+        [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete([FromRoute] DeleteProductCommandRequest deleteProductCommandRequest)
         {
             DeleteProductCommandResponse response = await _mediator.Send(deleteProductCommandRequest);
@@ -153,7 +126,7 @@ namespace ECommerceAPI.API.Controllers
         public async Task<IActionResult> getProductImages([FromRoute] GetProductImagesCommandRequest getProductImagesCommandRequest)
         {
 
-            List<GetProductImagesCommandResponse>  response=await _mediator.Send(getProductImagesCommandRequest);
+            List<GetProductImagesCommandResponse> response = await _mediator.Send(getProductImagesCommandRequest);
             return Ok(response);
         }
 
