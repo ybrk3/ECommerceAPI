@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace ECommerceAPI.Application
         public static void AddApplicationServices(this IServiceCollection service)
         {
             service.AddMediatR(cfg => { cfg.RegisterServicesFromAssemblies(typeof(ServiceRegistration).Assembly); });
+           
         }
     }
 }

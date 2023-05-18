@@ -16,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
+builder.Services.AddHttpClient();
 
 //Add Storage Type
 builder.Services.AddStorage<AzureStorage>(); //when we use StorageService method it will get them from Azure storage
