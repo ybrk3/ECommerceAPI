@@ -1,5 +1,7 @@
-﻿using ECommerceAPI.Application.Abstractions.Token;
+﻿using ECommerceAPI.Application.Abstractions.Services;
+using ECommerceAPI.Application.Abstractions.Token;
 using ECommerceAPI.Application.DTOs;
+using ECommerceAPI.Application.DTOs.User;
 using ECommerceAPI.Domain.Entities.Identity;
 using Google.Apis.Auth;
 using MediatR;
@@ -16,68 +18,39 @@ namespace ECommerceAPI.Application.Features.Commands.UsersCommands.GoogleLogin
 {
     public class GoogleLoginUserCommandHandler : IRequestHandler<GoogleLoginUserCommandRequest, GoogleLoginUserCommandResponse>
     {
-        readonly UserManager<AppUser> _userManager;
-        readonly IConfiguration _configuration;
-        readonly ITokenHandler _tokenHandler;
+        private readonly IGoogleAuthService _googleAuthService;
 
-        public GoogleLoginUserCommandHandler(UserManager<AppUser> userManager, IConfiguration configuration, ITokenHandler tokenHandler)
+        public GoogleLoginUserCommandHandler(IGoogleAuthService googleAuthService)
         {
-            _userManager = userManager;
-            _configuration = configuration;
-            _tokenHandler = tokenHandler;
+            _googleAuthService = googleAuthService;
         }
 
         public async Task<GoogleLoginUserCommandResponse> Handle(GoogleLoginUserCommandRequest request, CancellationToken cancellationToken)
         {
-            //Setting when validating JSON Web signature
-            ValidationSettings? settings = new GoogleJsonWebSignature.ValidationSettings()
+          GoogleLoginUserResponseDTO googleLoginUserResponse= await _googleAuthService.GoogleLoginAsync(new()
             {
-                Audience = new List<string> { _configuration["ExternalLogin:Google-Client-Id"] }
-            };
+                Email = request.Email,
+                Name = request.Name,
+                PhotoUrl = request.PhotoUrl,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Id = request.Id,
+                Provider = request.Provider,
+                IdToken = request.IdToken,
 
-            //Validating requested IdToken with above settings
-            Payload payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
-
-            //AspNetUsers consist of users registered through application not from external source
-            //AspNetUserLogins consist of users registered from external source such as google, facebook
-            //External user info to be added to the "AspNetUserLogins" table, if not exist in that table. 
-            UserLoginInfo userLoginInfo = new(request.Provider, payload.Subject, request.Provider);
-
-            //With login information it tries to find user trying to be logged in
-            //If returns null, that means user not exists in AspNetUserLogins and AspNetUsers tables
-            AppUser? user = await _userManager.FindByLoginAsync(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey);
-
-            bool result = user != null;
-            if (user == null)
+            });
+            return new()
             {
-                //Check whether it's mail address is exist in db
-                user = await _userManager.FindByEmailAsync(payload.Email);
-
-                //if user still not found, we save it to the system
-                if (user == null)
-                {
-
-                    user = new()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Email = payload.Email,
-                        UserName = payload.Email.Split("@")[0],
-                        NameSurname = payload.Name,
-                    };
-                    IdentityResult createResult = await _userManager.CreateAsync(user); //It will save it to the AspNetUsers table
-                    result = createResult.Succeeded;
-                }
-            }
-
-            if (result) await _userManager.AddLoginAsync(user, userLoginInfo); //It will save it to the AspNetUserLogins table
-            else throw new Exception("Invalid external authentication");
-
-            //Authenticate the user with token
-            Token token = _tokenHandler.CreateAccessToken(5);
-            return new GoogleLoginUserCommandResponse()
-            {
-                Token = token,
+                Token = googleLoginUserResponse.Token,
             };
         }
     }
 }
+/* public string Id { get; set; }
+        public string Email { get; set; }
+        public string IdToken { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Name { get; set; }
+        public string PhotoUrl { get; set; }
+        public string Provider { get; set; }*/
