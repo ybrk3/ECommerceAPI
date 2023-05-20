@@ -12,6 +12,9 @@ namespace ECommerceAPI.Application.Abstractions.Token
         //To create Token
         Application.DTOs.Token CreateAccessToken(int expiration);
 
+        //To create resresh token
+        string CreateRefreshToken();
+
     }
 }
 

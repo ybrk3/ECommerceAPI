@@ -45,7 +45,26 @@ namespace ECommerceAPI.Infrastructure.Services.Token
             //After settings, create token by getting instance from security token creator
             JwtSecurityTokenHandler securityTokenHandler = new();
             token.AccessToken = securityTokenHandler.WriteToken(securityToken);
+            //Also add refresh token
+            token.RefreshToken = CreateRefreshToken();
             return token;
+        }
+
+        public string CreateRefreshToken()
+        {
+            //create byte array with 32 indexes
+            byte[]? number = new byte[32];
+
+            //create a rendom number
+            using RandomNumberGenerator random = RandomNumberGenerator.Create();
+
+            //add randowm number to byte array
+            random.GetBytes(number);
+
+            //return number in string
+            string? refreshToken = Convert.ToBase64String(number);
+            return refreshToken;
+
         }
     }
 }

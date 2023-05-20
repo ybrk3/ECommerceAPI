@@ -2,9 +2,11 @@
 using ECommerceAPI.Application.Abstractions.Token;
 using ECommerceAPI.Application.DTOs;
 using ECommerceAPI.Application.DTOs.User;
+using ECommerceAPI.Application.Exceptions;
 using ECommerceAPI.Domain.Entities.Identity;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -15,22 +17,24 @@ using static Google.Apis.Auth.GoogleJsonWebSignature;
 
 namespace ECommerceAPI.Persistence.Services.Authentication
 {
-    public class GoogleAuthService : IGoogleAuthService
+    public sealed class GoogleAuthService : IGoogleAuthService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly ITokenHandler _tokenHandler;
-        public GoogleAuthService(UserManager<AppUser> userManager, IConfiguration configuration, ITokenHandler tokenHandler)
+        private readonly IUserService _userService;
+        public GoogleAuthService(UserManager<AppUser> userManager, IConfiguration configuration, ITokenHandler tokenHandler, IUserService userService)
         {
             _userManager = userManager;
             _configuration = configuration;
             _tokenHandler = tokenHandler;
+            _userService = userService;
         }
 
         public async Task<GoogleLoginUserResponseDTO> GoogleLoginAsync(GoogleLoginUserDTO model)
         {
             //Setting when validating JSON Web signature
-            ValidationSettings? settings = new GoogleJsonWebSignature.ValidationSettings()
+            ValidationSettings settings = new GoogleJsonWebSignature.ValidationSettings()
             {
                 Audience = new List<string> { _configuration["ExternalLogin:Google-Client-Id"] },
 
@@ -49,24 +53,24 @@ namespace ECommerceAPI.Persistence.Services.Authentication
             AppUser? appUser = await _userManager.FindByLoginAsync(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey);
 
             bool result = appUser != null;
-            if (appUser == null)
+            //Check user by its mail address
+            appUser = null ?? await _userManager.FindByEmailAsync(model.Email);
+
+            //Check user by its mail address
+            appUser =
+
+            //If user's mail address also not found, add it to the application as a new user
+            appUser = new()
             {
+                Id = Guid.NewGuid().ToString(),
+                NameSurname = payload.Name,
+                Email = payload.Email,
+                UserName = payload.Email.Split('@')[0],
+            };
+            IdentityResult createResult = await _userManager.CreateAsync(appUser);
+            result = createResult.Succeeded;
 
-                //Check user by its mail address
-                appUser = await _userManager.FindByEmailAsync(model.Email);
 
-                //If user's mail address also not found, add it to the application as a new user
-                appUser = new()
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    NameSurname = payload.Name,
-                    Email = payload.Email,
-                    UserName = payload.Email.Split('@')[0],
-                };
-                IdentityResult createResult = await _userManager.CreateAsync(appUser);
-                result = createResult.Succeeded;
-
-            }
             //It will save it to the AspNetUserLogins table
             if (result) await _userManager.AddLoginAsync(appUser, userLoginInfo);
             else throw new Exception("Invalid external authentication");

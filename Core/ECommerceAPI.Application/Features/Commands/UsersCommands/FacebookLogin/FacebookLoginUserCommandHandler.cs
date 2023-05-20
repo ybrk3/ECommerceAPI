@@ -39,13 +39,13 @@ namespace ECommerceAPI.Application.Features.Commands.UsersCommands.FacebookLogin
             //request token from facebook
             string accessTokenResponse = await _httpClient.GetStringAsync($"https://graph.facebook.com/oauth/access_token?client_id={_configuration["ExternalLogin:Facebook:App-Id"]}&client_secret={_configuration["ExternalLogin:Facebook:App-Secret"]}&grant_type=client_credentials");
             //deserialize the token response of facebook to check user
-            FacebookAccessTokenResponse facebookAccessTokenResponse = JsonSerializer.Deserialize<FacebookAccessTokenResponse>(accessTokenResponse);
+            FacebookAccessTokenResponse? facebookAccessTokenResponse = JsonSerializer.Deserialize<FacebookAccessTokenResponse>(accessTokenResponse);
 
             //check user
-            string userAccessTokenValidation = await _httpClient.GetStringAsync($"https://graph.facebook.com/debug_token?input_token={request.AuthToken}&access_token={facebookAccessTokenResponse.AccessToken}");
+            string? userAccessTokenValidation = await _httpClient.GetStringAsync($"https://graph.facebook.com/debug_token?input_token={request.AuthToken}&access_token={facebookAccessTokenResponse.AccessToken}");
 
             //get validation status and user_id which handle from above http client request
-            FacebookUserAccessTokenValidation validation = JsonSerializer.Deserialize<FacebookUserAccessTokenValidation>(userAccessTokenValidation);
+            FacebookUserAccessTokenValidation? validation = JsonSerializer.Deserialize<FacebookUserAccessTokenValidation>(userAccessTokenValidation);
 
             //if user is valid get the information needed 
             if (validation.Data.IsValid)
@@ -54,13 +54,13 @@ namespace ECommerceAPI.Application.Features.Commands.UsersCommands.FacebookLogin
 
                 //get neccessary info from facebook to save or check 
 
-                FacebookUserInfo userInfo = JsonSerializer.Deserialize<FacebookUserInfo>(userInfoResponse);
+                FacebookUserInfo? userInfo = JsonSerializer.Deserialize<FacebookUserInfo>(userInfoResponse);
 
 
                 //AspNetUsers consist of users registered through application not from external source
                 //AspNetUserLogins consist of users registered from external source such as google, fb
                 //External user info to be added to"AspNetUserLogins" table, if not exist in that table. 
-                UserLoginInfo userLoginInfo = new UserLoginInfo("FACEBOOK", validation.Data.UserId, "FACEBOOK");
+                UserLoginInfo? userLoginInfo = new UserLoginInfo("FACEBOOK", validation.Data.UserId, "FACEBOOK");
 
                 //With login information it tries to find user trying to be logged in
                 //If returns null, that means user not exists in AspNetUserLogins and AspNetUsers tables
@@ -97,7 +97,7 @@ namespace ECommerceAPI.Application.Features.Commands.UsersCommands.FacebookLogin
             }
 
             //Authenticate the user with token
-            Token token = _tokenHandler.CreateAccessToken(5);
+            Token? token = _tokenHandler.CreateAccessToken(5);
             //send token to API
             return new() { Token = token };
         }

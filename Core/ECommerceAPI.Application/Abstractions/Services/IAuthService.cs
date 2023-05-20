@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Application.Abstractions.Services
 {
-    public interface IAuthService
+    public interface IAuthService : IRefreshTokenService
     {
         Task<LoginUserResponseDTO> LoginAsync(LoginUserDTO model);
     }
