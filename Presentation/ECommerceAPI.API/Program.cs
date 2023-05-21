@@ -1,4 +1,5 @@
 ﻿using ECommerceAPI.API.Configurations.ColumnWriters;
+using ECommerceAPI.API.Extensions;
 using ECommerceAPI.Application;
 using ECommerceAPI.Application.Validators.Product;
 using ECommerceAPI.Infrastructure;
@@ -115,6 +116,11 @@ if (app.Environment.IsDevelopment())
 }
 
 //****//
+
+/*Excepiton Handler*/
+app.ConfigureExceptionHandler<Program>(app.Services.GetRequiredService<ILogger<Program>>());
+
+
 app.UseStaticFiles();
 
 app.UseHttpLogging();
