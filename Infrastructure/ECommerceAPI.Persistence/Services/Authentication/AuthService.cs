@@ -34,9 +34,11 @@ namespace ECommerceAPI.Persistence.Services.Authentication
             //At first find the user to login
             //1- By its name
             AppUser? user = await _userManager.FindByNameAsync(model.EmailOrUsername);
+            
 
             //2- if userName not entered, check it by its email address
-            user = null ?? await _userManager.FindByEmailAsync(model.EmailOrUsername);
+            if (user == null) { await _userManager.FindByEmailAsync(model.EmailOrUsername); }
+
 
             //If user stil not exists, throw exception
             if (user == null) throw new NotFoundUserException();
@@ -51,7 +53,7 @@ namespace ECommerceAPI.Persistence.Services.Authentication
             if (signInResult.Succeeded)
             {
                 //User authenticated, so authorized it 
-                Token token = _tokenHandler.CreateAccessToken(5);
+                Token token = _tokenHandler.CreateAccessToken(5, user);
                 return new()
                 {
                     Token = token,
@@ -70,7 +72,7 @@ namespace ECommerceAPI.Persistence.Services.Authentication
             if (user != null && user.RefreshTokenExpiryDate > DateTime.UtcNow)
             {
                 //Create toke
-                Token token = _tokenHandler.CreateAccessToken(5);
+                Token token = _tokenHandler.CreateAccessToken(5, user);
                 //update user's refresh token and then user
                 await _userService.UpdateRefreshToken(token.AccessToken, user, token.Expiration, 5);
                 return token;

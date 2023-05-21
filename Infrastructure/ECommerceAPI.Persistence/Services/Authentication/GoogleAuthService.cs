@@ -53,22 +53,25 @@ namespace ECommerceAPI.Persistence.Services.Authentication
             AppUser? appUser = await _userManager.FindByLoginAsync(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey);
 
             bool result = appUser != null;
-            //Check user by its mail address
-            appUser = null ?? await _userManager.FindByEmailAsync(model.Email);
+            if(result) {
+                //Check user by its mail address
+                if (appUser == null) { appUser= await _userManager.FindByEmailAsync(model.Email); }
 
-            //Check user by its mail address
-            appUser =
 
-            //If user's mail address also not found, add it to the application as a new user
-            appUser = new()
-            {
-                Id = Guid.NewGuid().ToString(),
-                NameSurname = payload.Name,
-                Email = payload.Email,
-                UserName = payload.Email.Split('@')[0],
-            };
-            IdentityResult createResult = await _userManager.CreateAsync(appUser);
-            result = createResult.Succeeded;
+                if (appUser == null)
+                {
+                    //If user's mail address also not found, add it to the application as a new user
+                    appUser = new()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        NameSurname = payload.Name,
+                        Email = payload.Email,
+                        UserName = payload.Email.Split('@')[0],
+                    };
+                    IdentityResult createResult = await _userManager.CreateAsync(appUser);
+                    result = createResult.Succeeded;
+                }
+            }
 
 
             //It will save it to the AspNetUserLogins table
@@ -76,7 +79,7 @@ namespace ECommerceAPI.Persistence.Services.Authentication
             else throw new Exception("Invalid external authentication");
 
             //After user saved to the application, Authorization
-            Token token = _tokenHandler.CreateAccessToken(5);
+            Token token = _tokenHandler.CreateAccessToken(5,appUser);
             return new()
             {
                 Token = token,

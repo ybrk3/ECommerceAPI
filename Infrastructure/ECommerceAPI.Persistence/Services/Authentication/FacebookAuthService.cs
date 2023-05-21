@@ -68,11 +68,9 @@ namespace ECommerceAPI.Persistence.Services.Authentication
 
                 bool result = user != null;
 
-
-                user = user ?? await _userManager.FindByEmailAsync(facebookUserInfo.Email);
-
                 //if user couldnt found, check whether its mail address is exist in db
-                user = await _userManager.FindByEmailAsync(facebookUserInfo.Email);
+                if (user == null) { await _userManager.FindByEmailAsync(facebookUserInfo.Email); }
+
 
                 //if user still not found, we save it to the db
                 if (user == null)
@@ -94,13 +92,14 @@ namespace ECommerceAPI.Persistence.Services.Authentication
                 if (result) await _userManager.CreateAsync(user); //it'll save it to the AspNetUserLogin table
                 else throw new Exception("Invalid external authentication");
 
-
+                //Authenticate the user with token
+                Token token = _tokenHandler.CreateAccessToken(5, user);
+                //send token to API
+                return new() { Token = token };
             }
 
-            //Authenticate the user with token
-            Token token = _tokenHandler.CreateAccessToken(5);
-            //send token to API
-            return new() { Token = token };
+
+            throw new AuthenticationErrorException();
 
         }
     }

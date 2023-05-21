@@ -1,6 +1,7 @@
 ﻿using ECommerceAPI.Application.Abstractions.Token;
 using ECommerceAPI.Application.DTOs;
 using ECommerceAPI.Application.DTOs.Facebook;
+using ECommerceAPI.Application.Exceptions;
 using ECommerceAPI.Domain.Entities.Identity;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Http;
@@ -93,13 +94,17 @@ namespace ECommerceAPI.Application.Features.Commands.UsersCommands.FacebookLogin
 
                     if (result) await _userManager.AddLoginAsync(user, userLoginInfo); //it will save it to the AspNetUserLogins table
                     else throw new Exception("Invalid external authentication");
+
+                   
                 }
+                //Authenticate the user with token
+                Token? token = _tokenHandler.CreateAccessToken(5, user);
+                //send token to API
+                return new() { Token = token };
+                
             }
 
-            //Authenticate the user with token
-            Token? token = _tokenHandler.CreateAccessToken(5);
-            //send token to API
-            return new() { Token = token };
+            throw new AuthenticationErrorException();
         }
     }
 }

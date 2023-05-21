@@ -44,17 +44,17 @@ namespace ECommerceAPI.Persistence.Services.User
             return response;
         }
 
-        public async Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accesTokenExpiryDate , int onAddRefreshTokenTime)
-        {
-            if(user != null)
+            public async Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accesTokenExpiryDate , int onAddRefreshTokenTime)
             {
-                //set user's refresh token values
-                user.RefreshToken= refreshToken;
-                user.RefreshTokenExpiryDate = accesTokenExpiryDate.AddMinutes(onAddRefreshTokenTime);
-                //then update it
-                await _userManager.UpdateAsync(user);
+                if(user != null)
+                {
+                    //set user's refresh token values
+                    user.RefreshToken= refreshToken;
+                    user.RefreshTokenExpiryDate = accesTokenExpiryDate.AddMinutes(onAddRefreshTokenTime);
+                    //then update it
+                    await _userManager.UpdateAsync(user);
+                }
+                throw new NotFoundUserException();
             }
-            throw new NotFoundUserException();
-        }
     }
 }
