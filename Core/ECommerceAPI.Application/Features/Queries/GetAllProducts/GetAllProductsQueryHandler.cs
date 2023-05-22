@@ -11,7 +11,7 @@ namespace ECommerceAPI.Application.Features.Queries.GetAllProducts
 {
     public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQueryRequest, GetAllProductsQueryResponse>
     {
-       readonly IProductReadRepository _productReadRepository;
+        readonly IProductReadRepository _productReadRepository;
 
         public GetAllProductsQueryHandler(IProductReadRepository productReadRepository)
         {
@@ -20,6 +20,7 @@ namespace ECommerceAPI.Application.Features.Queries.GetAllProducts
 
         public async Task<GetAllProductsQueryResponse> Handle(GetAllProductsQueryRequest request, CancellationToken cancellationToken)
         {
+           
             var totalCount = _productReadRepository.GetAll(false).Count();
             var products = _productReadRepository.GetAll(false).Skip(request.Page * request.Size).Take(request.Size).Select(p => new
             { p.Id, p.Name, p.Stock, p.Price, p.CreatedDate, p.UpdatedDate }).ToList();

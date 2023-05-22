@@ -15,6 +15,8 @@ using Serilog;
 using Serilog.Context;
 using Serilog.Core;
 using Serilog.Sinks.PostgreSQL;
+using SignalR;
+using SignalR.Hubs;
 using System.Security.Claims;
 using System.Text;
 
@@ -25,13 +27,14 @@ builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddHttpClient();
+builder.Services.AddSignalRServices();
 
 //Add Storage Type
 builder.Services.AddStorage<AzureStorage>(); //when we use StorageService method it will get them from Azure storage
 
 //CORS Policy
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
-.AllowAnyHeader().AllowAnyMethod()));
+.AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
 //---------------Serilog Configuration-------------------//
 
@@ -148,5 +151,7 @@ app.Use(async (context, next) =>
 
 app.MapControllers();
 
+
+app.MapHubs(); //signalR
 app.Run();
 

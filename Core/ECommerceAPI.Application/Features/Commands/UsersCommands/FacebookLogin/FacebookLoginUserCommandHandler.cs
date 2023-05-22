@@ -49,7 +49,7 @@ namespace ECommerceAPI.Application.Features.Commands.UsersCommands.FacebookLogin
             FacebookUserAccessTokenValidation? validation = JsonSerializer.Deserialize<FacebookUserAccessTokenValidation>(userAccessTokenValidation);
 
             //if user is valid get the information needed 
-            if (validation.Data.IsValid)
+            if (validation !=null && validation.Data.IsValid)
             {
                 string userInfoResponse = await _httpClient.GetStringAsync($"https://graph.facebook.com/me?fields=email,name&access_token={request.AuthToken}");
 
