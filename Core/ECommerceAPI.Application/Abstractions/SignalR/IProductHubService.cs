@@ -8,7 +8,7 @@ namespace ECommerceAPI.Application.Abstractions.SignalR
 {
     public interface IProductHubService
     {
-        //Method to send message when product added
+        //Method to send message to client when product added
         Task ProductAddedMessageAsync(string message);
     }
 }

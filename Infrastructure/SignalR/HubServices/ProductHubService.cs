@@ -21,7 +21,7 @@ namespace SignalR.HubServices
 
         public async Task ProductAddedMessageAsync(string message)
         {
-            //it will send given "message" to Clients.All agains "recieveProductAddedMessage" method (it's name defined in constants)
+            //it will send given "message" to Clients.All againts "recieveProductAddedMessage" method (it's name defined in constants)
             await _hubContext.Clients.All.SendAsync(RecieveFunctionNames.ProductAddedMessage, message);
 
         }

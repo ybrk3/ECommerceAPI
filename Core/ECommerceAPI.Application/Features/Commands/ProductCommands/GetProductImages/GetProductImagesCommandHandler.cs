@@ -31,6 +31,7 @@ namespace ECommerceAPI.Application.Features.Commands.ProductCommands.GetProductI
                 Path = $"{_configuration["BaseStorageUrl"]}/{p.Path}", //Azure URL
                 FileName=p.FileName,
                 Id= p.Id,
+                Showcase=p.Showcase,
             }).ToList();
         }
     }

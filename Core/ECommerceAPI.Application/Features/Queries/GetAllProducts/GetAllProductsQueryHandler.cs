@@ -1,6 +1,7 @@
 ﻿using ECommerceAPI.Application.Repositories;
 using ECommerceAPI.Application.RequestParameters;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,13 +22,15 @@ namespace ECommerceAPI.Application.Features.Queries.GetAllProducts
         public async Task<GetAllProductsQueryResponse> Handle(GetAllProductsQueryRequest request, CancellationToken cancellationToken)
         {
            
-            var totalCount = _productReadRepository.GetAll(false).Count();
-            var products = _productReadRepository.GetAll(false).Skip(request.Page * request.Size).Take(request.Size).Select(p => new
-            { p.Id, p.Name, p.Stock, p.Price, p.CreatedDate, p.UpdatedDate }).ToList();
+            var totalProductCount = _productReadRepository.GetAll(false).Count();
+            var products = _productReadRepository.GetAll(false).Skip(request.Page * request.Size).Take(request.Size)
+                .Include(p=> p.Images)
+                .Select(p => new
+            { p.Id, p.Name, p.Stock, p.Price, p.CreatedDate, p.UpdatedDate, p.Images }).ToList();
 
             return new()
             {
-                TotalCount = totalCount,
+                TotalProductCount = totalProductCount,
                 Products = products
             };
         }

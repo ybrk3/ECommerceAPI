@@ -1,7 +1,6 @@
 ﻿using ECommerceAPI.Domain.Entities;
 using ECommerceAPI.Domain.Entities.Common;
 using ECommerceAPI.Domain.Entities.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -28,6 +27,23 @@ namespace ECommerceAPI.Persistence.Contexts
         public DbSet<FileEntity> Files { get; set; }
         public DbSet<ImageFile> ImageFiles { get; set; }
         public DbSet<InvoiceFile> Invoices { get; set; }
+        public DbSet<Basket> Baskets { get; set; }
+        public DbSet<BasketItem> BasketItems { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+
+            //Basket can be without order, however order cannot be without basket 
+            //So we should define basketId as primaryKey 
+            builder.Entity<Order>()
+                .HasKey(b => b.Id);
+            builder.Entity<Basket>()
+               .HasOne(b => b.Order)
+               .WithOne(o => o.Basket)
+               .HasForeignKey<Order>(b => b.Id);
+
+
+            base.OnModelCreating(builder);
+        }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

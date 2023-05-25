@@ -17,5 +17,7 @@ namespace ECommerceAPI.Domain.Entities
 
         //many-to-many relationship with images
         public ICollection<ImageFile> Images { get; set; }
+
+        public ICollection<BasketItem> BasketItems { get; set; }
     }
 }

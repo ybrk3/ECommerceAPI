@@ -19,5 +19,7 @@ namespace ECommerceAPI.Domain.Entities.Identity
         //While creating user it'll be null so it's nullable
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryDate { get; set; }
+
+        public ICollection<Basket>? Baskets { get; set; }
     }
 }

@@ -6,10 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerceAPI.Application.Repositories
+namespace ECommerceAPI.Application.Repositories.Basket
 {
-    //this interface contains methods in IReadRepository in relation to Customer
-    public interface ICustomerReadRepository : IReadRepository<Customer>
+    public interface IBasketReadRepository : IReadRepository<Domain.Entities.Basket>
     {
     }
 }
