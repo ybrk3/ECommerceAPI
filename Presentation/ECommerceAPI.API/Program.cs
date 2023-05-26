@@ -22,6 +22,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//To reach HttpContext object which created after request made by user
+//We use it to get user's username for basket processes
+builder.Services.AddHttpContextAccessor();
+
+
 // Add services to the container.
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
