@@ -26,13 +26,16 @@ namespace ECommerceAPI.Application.Features.Commands.ProductCommands.GetProductI
             Domain.Entities.Product? product = await _productReadRepository.Table.Include(p => p.Images).FirstOrDefaultAsync(p => p.Id == Guid.Parse(request.ProductId));
 
             
-            return product?.Images.Select(p => new GetProductImagesCommandResponse
+            List<GetProductImagesCommandResponse>? response= product?.Images?.Select(p => new GetProductImagesCommandResponse
             {
                 Path = $"{_configuration["BaseStorageUrl"]}/{p.Path}", //Azure URL
                 FileName=p.FileName,
                 Id= p.Id,
                 Showcase=p.Showcase,
             }).ToList();
+
+            return response;
+
         }
     }
 }

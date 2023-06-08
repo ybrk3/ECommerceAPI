@@ -72,7 +72,7 @@ namespace ECommerceAPI.Persistence.Services.Basket
             }
         }
 
-        public async Task<List<BasketItem>> GetBucketItemsAsync()
+        public async Task<List<BasketItem>> GetBasketItemsAsync()
         {
             //Find user and get its basket
             Domain.Entities.Basket basket = await FindUserAndGetBasket();
@@ -80,7 +80,8 @@ namespace ECommerceAPI.Persistence.Services.Basket
             //get "Basket" including BasketItems and Products where user's basket equals Baskets in db
             Domain.Entities.Basket? resultBasket = await _basketReadRepository.Table
                                                     .Include(b => b.BasketItems)
-                                                    .ThenInclude(b => b.ProductId)
+                                                    .ThenInclude(b => b.Product)
+                                                    .ThenInclude(b=>b.Images)
                                                     .FirstOrDefaultAsync(b => b.Id == basket.Id);
 
             //return basket's basketItems in a list
@@ -118,7 +119,7 @@ namespace ECommerceAPI.Persistence.Services.Basket
                 //Get user's Baskets with its' orders, if there is a Basket not ordered yet, return null and group them into BasketOrders
                 var _basket = from baskets in user?.Baskets
                               join order in _orderWriteRepository.Table
-                              on baskets.Id equals order.Basket.Id into BasketOrder
+                              on baskets.Id equals order.Id into BasketOrder
                               from order in BasketOrder.DefaultIfEmpty()
                               select new
                               {
@@ -138,6 +139,15 @@ namespace ECommerceAPI.Persistence.Services.Basket
                 return targetBasket;
             }
             throw new Exception("Unexpected Error! Please try again");
+        }
+
+        public Domain.Entities.Basket? GetUserActiveBasket
+        {
+            get
+            {
+                Domain.Entities.Basket? basket = FindUserAndGetBasket().Result;
+                return basket;
+            }
         }
     }
 }

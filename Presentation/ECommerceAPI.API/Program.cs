@@ -77,8 +77,8 @@ builder.Services.AddHttpLogging(logging =>
     logging.MediaTypeOptions.AddText("application/javascript");
     logging.RequestBodyLogLimit = 4096;
     logging.ResponseBodyLogLimit = 4096;
-
 });
+
 //-----------------------------------------------------//
 
 
@@ -131,9 +131,13 @@ app.ConfigureExceptionHandler<Program>(app.Services.GetRequiredService<ILogger<P
 
 app.UseStaticFiles();
 
+app.UseSerilogRequestLogging();
 app.UseHttpLogging();
+
 app.UseCors();
 app.UseHttpsRedirection();
+
+
 
 
 //Authentication and Authorization
@@ -145,7 +149,8 @@ app.UseAuthorization();
 app.Use(async (context, next) =>
 {
     //not null and returns true
-    var username = context.User?.Identity?.IsAuthenticated != null || true ? context.User?.Identity?.Name : null;
+    var username = context.User?.Identity?.IsAuthenticated != null || true ? context.User.Identity.Name : null;
+
     //after getting this value, creating property and save it tot he log context
 
     LogContext.PushProperty("user_name", username);
@@ -155,7 +160,6 @@ app.Use(async (context, next) =>
 
 
 app.MapControllers();
-
 
 app.MapHubs(); //signalR
 app.Run();

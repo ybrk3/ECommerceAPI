@@ -42,7 +42,7 @@ namespace ECommerceAPI.Infrastructure.Services.Token
                 expires: token.Expiration,
                 notBefore: DateTime.UtcNow, //to be kicked in as soon as created
                 signingCredentials: signingCredentials,
-                claims: new List<Claim> { new(ClaimTypes.Name, user.UserName)} //added to get username for log
+                claims: new List<Claim> { new(ClaimTypes.Name, user.UserName) } //added to get username for log
                 );
 
             //After settings, create token by getting instance from security token creator
@@ -65,8 +65,8 @@ namespace ECommerceAPI.Infrastructure.Services.Token
             random.GetBytes(number);
 
             //return number in string
-            string? refreshToken = Convert.ToBase64String(number);
-            return refreshToken;
+            return Convert.ToBase64String(number);
+
 
         }
     }

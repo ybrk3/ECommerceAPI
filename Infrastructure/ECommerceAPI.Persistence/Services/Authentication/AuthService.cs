@@ -54,10 +54,12 @@ namespace ECommerceAPI.Persistence.Services.Authentication
             {
                 //User authenticated, so authorized it 
                 Token token = _tokenHandler.CreateAccessToken(5, user);
+                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 5);
                 return new()
                 {
                     Token = token,
                 };
+                
             }
             //Throw exception if password not matches
             throw new AuthenticationErrorException();

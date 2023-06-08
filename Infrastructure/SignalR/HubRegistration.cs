@@ -13,7 +13,9 @@ namespace SignalR
     {
         public static void MapHubs(this Microsoft.AspNetCore.Builder.WebApplication webApplication)
         {
+            //end-points to be used in UI
             webApplication.MapHub<ProductHub>("/products-hub");
+            webApplication.MapHub<OrderHub>("/orders-hub");
         }
     }
 }

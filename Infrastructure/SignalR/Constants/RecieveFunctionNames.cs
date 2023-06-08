@@ -8,6 +8,9 @@ namespace SignalR.Constants
 {
     public static class RecieveFunctionNames
     {
+        //Method names to be used by clients.
+        //They will get action through SignalR through below given method name
         public static string ProductAddedMessage = "recieveProductAddedMessage";
+        public static string NewOrderMessage = "recieveOrderAddedMessage";
     }
 }

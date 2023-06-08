@@ -8,9 +8,9 @@ namespace ECommerceAPI.Application.Features.Commands.ProductCommands.GetProductI
 {
     public class GetProductImagesCommandResponse
     {
-        public string Path { get; set; }
-        public Guid Id { get; set; }
-        public string FileName { get; set; }
+        public string? Path { get; set; }
+        public Guid? Id { get; set; }
+        public string? FileName { get; set; }
         public bool? Showcase { get; set; }
     }
 }

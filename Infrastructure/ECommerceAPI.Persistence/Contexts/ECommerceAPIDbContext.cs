@@ -32,14 +32,21 @@ namespace ECommerceAPI.Persistence.Contexts
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
+            
+
             //Basket can be without order, however order cannot be without basket 
             //So we should define basketId as primaryKey 
             builder.Entity<Order>()
-                .HasKey(b => b.Id);
+               .HasKey(b => b.Id);
+            //OrderCode to be unique
+            builder.Entity<Order>()
+                .HasIndex(o => o.OrderCode)
+                .IsUnique();
+
             builder.Entity<Basket>()
-               .HasOne(b => b.Order)
-               .WithOne(o => o.Basket)
-               .HasForeignKey<Order>(b => b.Id);
+                .HasOne(b => b.Order)
+                .WithOne(o => o.Basket)
+                .HasForeignKey<Order>(b => b.Id);
 
 
             base.OnModelCreating(builder);
