@@ -1,4 +1,7 @@
 ﻿using ECommerceAPI.Application.Abstractions.Storage;
+using ECommerceAPI.Application.Consts;
+using ECommerceAPI.Application.CustomAttributes;
+using ECommerceAPI.Application.Enums;
 using ECommerceAPI.Application.Features.Commands.Product.CreateProduct;
 using ECommerceAPI.Application.Features.Commands.Product.DeleteProduct;
 using ECommerceAPI.Application.Features.Commands.ProductCommands.DeleteProductImage;
@@ -37,6 +40,7 @@ namespace ECommerceAPI.API.Controllers
 
         [HttpGet]
         [Authorize(AuthenticationSchemes = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Reading, Definition = "Get All Products")]
         public async Task<IActionResult> GetAllProducts([FromQuery] GetAllProductsQueryRequest getAllProductsQueryRequest)
         {
             GetAllProductsQueryResponse response = await _mediator.Send(getAllProductsQueryRequest);
@@ -44,6 +48,7 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpGet("{Id}")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Reading, Definition = "Get Product By Id")]
         public async Task<IActionResult> Get([FromRoute] GetProductByIdQueryRequest getProductByIdQueryRequest)
         {
             GetProductByIdQueryResponse products = await _mediator.Send(getProductByIdQueryRequest);
@@ -52,6 +57,7 @@ namespace ECommerceAPI.API.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = "Admin")] //Only users who have "Admin" authorization, can use this controller
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Writing, Definition = "Create Product")]
         public async Task<IActionResult> Post(CreateProductCommandRequest createProductCommandRequest)
         {
             await _mediator.Send(createProductCommandRequest);
@@ -60,6 +66,7 @@ namespace ECommerceAPI.API.Controllers
 
         [HttpPut]
         [Authorize(AuthenticationSchemes = "Admin")] //Only users who have "Admin" authorization, can use this controller
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Updating, Definition = "Update Product")]
         public async Task<IActionResult> Put([FromBody] UpdateProductCommandRequest updateProductCommandRequest)
         {
             UpdateProductCommandResponse response = await _mediator.Send(updateProductCommandRequest);
@@ -68,6 +75,7 @@ namespace ECommerceAPI.API.Controllers
 
         [HttpDelete("{Id}")]
         [Authorize(AuthenticationSchemes = "Admin")] //Only users who have "Admin" authorization, can use this controller
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Deleting, Definition = "Delete Product")]
         public async Task<IActionResult> Delete([FromRoute] DeleteProductCommandRequest deleteProductCommandRequest)
         {
             DeleteProductCommandResponse response = await _mediator.Send(deleteProductCommandRequest);
@@ -79,6 +87,7 @@ namespace ECommerceAPI.API.Controllers
         //There are more than 1 post functions here, that's Why we differentiate it by indicating "[action]"
         [HttpPost("[action]")]
         [Authorize(AuthenticationSchemes = "Admin")] //Only users who have "Admin" authorization, can use this controller
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Writing, Definition = "Upload Product Image")]
         public async Task<IActionResult> Upload([FromQuery] UploadProductImageCommandRequest request)
         {
             //var datas = await _fileService.UploadAsync("resources/product-images", Request.Form.Files);
@@ -129,6 +138,7 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpGet("[action]/{ProductId}")] //If we define it here, it means that value comes from route
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Reading, Definition = "Get Product Images")]
         public async Task<IActionResult> getProductImages([FromRoute] GetProductImagesCommandRequest getProductImagesCommandRequest)
         {
 
@@ -139,6 +149,7 @@ namespace ECommerceAPI.API.Controllers
         //imageId comes from query string
         [HttpDelete("[action]/{Id}")]
         [Authorize(AuthenticationSchemes = "Admin")] //Only users who have "Admin" authorization, can use this controller
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Deleting, Definition = "Delete Product Image")]
         public async Task<IActionResult> deleteImage([FromRoute] DeleteProductImageCommandRequest request, [FromQuery] string imageId)
         {
             request.ImageId = imageId;
@@ -149,6 +160,7 @@ namespace ECommerceAPI.API.Controllers
 
         [HttpGet("[action]")]
         [Authorize(AuthenticationSchemes = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Updating, Definition = "Change Show Case")]
         public async Task<IActionResult> ChangeShowCase([FromQuery] ChangeShowcaseImageCommandRequest request)
         {
             ChangeShowcaseImageCommandResponse response = await _mediator.Send(request);

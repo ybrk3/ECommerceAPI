@@ -10,5 +10,7 @@ namespace ECommerceAPI.Application.Abstractions.Services
     public interface IAuthService : IRefreshTokenService
     {
         Task<LoginUserResponseDTO> LoginAsync(LoginUserDTO model);
+        Task PasswordResetAsync(string email); //Which creates token to reset password and it's sending email to user
+        Task<bool> VerifyResetToken(string resetToken, string userId);
     }
 }

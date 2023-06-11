@@ -20,7 +20,7 @@ namespace ECommerceAPI.Application.Features.Queries.OrderQueries.GetOrderById
 
         public async Task<GetOrderByIdAsyncQueryResponse> Handle(GetOrderByIdAsyncQueryRequest request, CancellationToken cancellationToken)
         {
-            
+
             SingleOrderDto data = await _orderService.GetOrderByIdAsync(request.Id);
             return new()
             {
@@ -30,6 +30,7 @@ namespace ECommerceAPI.Application.Features.Queries.OrderQueries.GetOrderById
                 BasketItems = data.BasketItems,
                 OrderCode = data.OrderCode,
                 CreatedDate = data.CreatedDate,
+                Completed = data.Completed,
             };
         }
     }

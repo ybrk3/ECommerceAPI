@@ -20,8 +20,9 @@ namespace ECommerceAPI.Infrastructure.Services
         }
 
 
+
         //being called where mail to send
-        public async Task SendMessageAsync(string[] tos, string subject, string body, bool isBodyHtml = true)
+        public async Task SendMailAsync(string[] tos, string subject, string body, bool isBodyHtml = true)
         {
             MailMessage mail = new();
             mail.IsBodyHtml = isBodyHtml;
@@ -38,9 +39,34 @@ namespace ECommerceAPI.Infrastructure.Services
         }
 
         //to send mail to single user
-        public async Task SendMessageAsync(string to, string subject, string body, bool isBodyHtml = true)
+        public async Task SendMailAsync(string to, string subject, string body, bool isBodyHtml = true)
         {
-            await SendMessageAsync(new[] { to }, subject, body, isBodyHtml);
+            await SendMailAsync(new[] { to }, subject, body, isBodyHtml);
         }
+
+        public async Task SendPasswordResetMailAsync(string to, string userId, string resetToken)
+        {
+            //For the mail body inclusive of link which directs user to reset password
+            StringBuilder mail = new();
+            //target=_blank  => open thge link in the new tab
+            mail.AppendLine("Merhaba<br>Eğer yeni şifre talebinde dulunduysanız aşağıdaki linkten şifrenizi yeniliyebilirsiniz.<br><a target=\"_blank\" href=\"");
+            mail.AppendLine(_configuration["AngularClientUrl"]);
+            mail.AppendLine("/update-password/"); //Route in UI
+            mail.AppendLine(userId);
+            mail.AppendLine("/");
+            mail.AppendLine(resetToken);
+            mail.AppendLine("\">Yeni şifre talebi için tıklayınız...</a></strong><br><br><span style=\"font-size:12px;\">NOT : Eğer ki bu talep tarafınızca gerçekleştirilmemişse lütfen bu maili ciddiye almayınız.</span><br>Saygılarımızla...<br><br><br>BY - E-CommerceApp");
+
+            await SendMailAsync(to, "Şifre Yenileme Talebi", mail.ToString());
+        }
+        public async Task SendCompletedOrderMailAsync(string to, string orderCode, DateTime orderDate, string userNameSurname)
+        {
+            string mail = $"Sayın {userNameSurname} Merhaba<br>" +
+                $"{orderDate} tarihinde vermiş olduğunuz {orderCode} kodlu siparişiniz tamamlanmış ve kargo firmasına verilmiştir.<br>Hayrını görünüz efendim...";
+
+            await SendMailAsync(to, $"{orderCode} Sipariş Numaralı Siparişiniz Tamamlandı", mail);
+
+        }
+
     }
 }

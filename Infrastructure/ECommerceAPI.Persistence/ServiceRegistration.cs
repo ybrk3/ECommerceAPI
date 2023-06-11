@@ -17,6 +17,7 @@ using ECommerceAPI.Persistence.Services.Authentication;
 using ECommerceAPI.Persistence.Services.Basket;
 using ECommerceAPI.Persistence.Services.Order;
 using ECommerceAPI.Persistence.Services.User;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -36,7 +37,8 @@ namespace ECommerceAPI.Persistence
             services.AddIdentity<AppUser, AppRole>(option =>
             {
                 option.User.RequireUniqueEmail = true;
-            }).AddEntityFrameworkStores<ECommerceAPIDbContext>(); //If needed, password or other requirements can be altered through <AppUser,AppRole>(options=>{})
+            }).AddEntityFrameworkStores<ECommerceAPIDbContext>()//If needed, password or other requirements can be altered through <AppUser,AppRole>(options=>{})
+            .AddDefaultTokenProviders(); //It's added to config for Generate Password Reset Token method used in AuthService 
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
             services.AddScoped<IProductReadRepository, ProductReadRepository>();
@@ -54,6 +56,8 @@ namespace ECommerceAPI.Persistence
             services.AddScoped<IBasketReadRepository, BasketReadRepository>();
             services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ICompletedOrderReadRespository,CompletedOrderReadRepository>();
+            services.AddScoped<ICompletedOrderWriteRespository,CompletedOrderWriteRepository>();
 
 
             services.AddScoped<IUserService, UserService>();

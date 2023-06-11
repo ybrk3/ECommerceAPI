@@ -3,9 +3,12 @@ using ECommerceAPI.Application.Abstractions.Token;
 using ECommerceAPI.Application.DTOs;
 using ECommerceAPI.Application.DTOs.User;
 using ECommerceAPI.Application.Exceptions;
+using ECommerceAPI.Application.Helpers.CustomEncoders;
 using ECommerceAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +23,7 @@ namespace ECommerceAPI.Persistence.Services.Authentication
         private readonly ITokenHandler _tokenHandler;
         private readonly UserManager<AppUser> _userManager;
         private readonly IUserService _userService;
+        private readonly IMailService _mailService;
 
         public AuthService(SignInManager<AppUser> signInManager, ITokenHandler tokenHandler, UserManager<AppUser> userManager, IUserService userService)
         {
@@ -34,7 +38,7 @@ namespace ECommerceAPI.Persistence.Services.Authentication
             //At first find the user to login
             //1- By its name
             AppUser? user = await _userManager.FindByNameAsync(model.EmailOrUsername);
-            
+
 
             //2- if userName not entered, check it by its email address
             if (user == null) { await _userManager.FindByEmailAsync(model.EmailOrUsername); }
@@ -54,12 +58,12 @@ namespace ECommerceAPI.Persistence.Services.Authentication
             {
                 //User authenticated, so authorized it 
                 Token token = _tokenHandler.CreateAccessToken(5, user);
-                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 5);
+                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 20);
                 return new()
                 {
                     Token = token,
                 };
-                
+
             }
             //Throw exception if password not matches
             throw new AuthenticationErrorException();
@@ -76,12 +80,51 @@ namespace ECommerceAPI.Persistence.Services.Authentication
                 //Create toke
                 Token token = _tokenHandler.CreateAccessToken(5, user);
                 //update user's refresh token and then user
-                await _userService.UpdateRefreshToken(token.AccessToken, user, token.Expiration, 5);
+                await _userService.UpdateRefreshToken(token.AccessToken, user, token.Expiration, 20);
                 return token;
             }
 
             //if user not found, throw authentication error
             throw new AuthenticationErrorException();
+        }
+
+        public async Task PasswordResetAsync(string email)
+        {
+            //Get and check whether email exists in the system
+            AppUser? user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                //Create refresh token to reset password
+                string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+               
+                //however this token can include non-proper chars for link url, so we are encoding it
+                //byte[] tokenBytes = Encoding.UTF8.GetBytes(resetToken); //convert it to byte
+                //resetToken = WebEncoders.Base64UrlEncode(tokenBytes); //encoding it
+                resetToken =resetToken.UrlEncode();
+
+                //Send mail to user
+                await _mailService.SendPasswordResetMailAsync(email, user.Id, resetToken);
+            }
+        }
+
+        public async Task<bool> VerifyResetToken(string resetToken, string userId)
+        {
+            AppUser? user = await _userManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+                //convert resetToken to byte array and decode it
+                //byte[] resetTokenByte = WebEncoders.Base64UrlDecode(resetToken);
+                //convert byte resetToken to string
+                //resetToken = Encoding.UTF8.GetString(resetTokenByte);
+                resetToken=resetToken.UrlDecode();
+                
+                
+                //verify decoded and converted resetToken with user's info
+                await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", resetToken);
+            };
+
+            return false;
         }
     }
 }
