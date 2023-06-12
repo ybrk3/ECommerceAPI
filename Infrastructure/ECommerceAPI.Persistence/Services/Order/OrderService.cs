@@ -15,11 +15,11 @@ namespace ECommerceAPI.Persistence.Services.Order
     {
         private readonly IOrderWriteRepository _orderWriteRepository;
         private readonly IOrderReadRepository _orderReadRepository;
-        private readonly ICompletedOrderWriteRespository _completedOrderWriteRespository;
-        private readonly ICompletedOrderReadRespository _completedOrderReadRepository;
+        private readonly ICompletedOrderWriteRepository _completedOrderWriteRespository;
+        private readonly ICompletedOrderReadRepository _completedOrderReadRepository;
         private readonly IMailService _mailService;
 
-        public OrderService(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository, ICompletedOrderWriteRespository completedOrderWriteRespository, ICompletedOrderReadRespository completedOrderReadRepository, IMailService mailService)
+        public OrderService(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository, ICompletedOrderWriteRepository completedOrderWriteRespository, ICompletedOrderReadRepository completedOrderReadRepository, IMailService mailService)
         {
             _orderWriteRepository = orderWriteRepository;
             _orderReadRepository = orderReadRepository;

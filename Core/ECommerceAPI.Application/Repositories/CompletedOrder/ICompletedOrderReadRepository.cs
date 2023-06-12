@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Application.Repositories
 {
-    public interface ICompletedOrderWriteRespository : IWriteRepository<CompletedOrder>
+    public interface ICompletedOrderReadRepository : IReadRepository<CompletedOrder>
     {
     }
 }

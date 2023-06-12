@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Persistence.Repositories
 {
-    public class CompletedOrderReadRepository : ReadRepository<CompletedOrder> , ICompletedOrderReadRespository
+    public class CompletedOrderReadRepository : ReadRepository<CompletedOrder> , ICompletedOrderReadRepository
     {
         public CompletedOrderReadRepository(ECommerceAPIDbContext context) : base(context)
         {

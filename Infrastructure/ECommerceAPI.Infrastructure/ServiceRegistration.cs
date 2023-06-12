@@ -1,7 +1,10 @@
 ﻿using ECommerceAPI.Application.Abstractions;
+using ECommerceAPI.Application.Abstractions.Services;
+using ECommerceAPI.Application.Abstractions.Services.Configurations;
 using ECommerceAPI.Application.Abstractions.Storage;
 using ECommerceAPI.Application.Abstractions.Token;
 using ECommerceAPI.Infrastructure.Services;
+using ECommerceAPI.Infrastructure.Services.Configurations;
 using ECommerceAPI.Infrastructure.Services.Storage;
 using ECommerceAPI.Infrastructure.Services.Token;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +22,8 @@ namespace ECommerceAPI.Infrastructure
         {
             service.AddScoped<IStorageService, StorageService>();
             service.AddScoped<ITokenHandler, TokenHandler>();
+            service.AddScoped<IMailService,MailService>();
+            service.AddScoped<IApplicationService, ApplicationService>();
         }
 
         //T must be Storage class and derived from IStorage (which are LocalStorage, AzureStorage etc.)
