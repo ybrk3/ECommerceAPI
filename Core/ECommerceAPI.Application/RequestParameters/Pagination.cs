@@ -9,7 +9,7 @@ namespace ECommerceAPI.Application.RequestParameters
     //It is for pagination in UI
     public abstract class Pagination
     {
-        //It is used in GetAllProductsRequest
+        //It is used in GetAllProductsRequest and GetRoles
         public int Page { get; set; }
         public int Size { get; set; }
     }

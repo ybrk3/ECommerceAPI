@@ -19,7 +19,7 @@ namespace ECommerceAPI.Application.Features.Commands.RoleCommands.DeleteRoleAsyn
 
         public async Task<DeleteRoleAsyncCommandResponse> Handle(DeleteRoleAsyncCommandRequest request, CancellationToken cancellationToken)
         {
-            bool result = await _roleService.DeleteRole(request.Name);
+            bool result = await _roleService.DeleteRole(request.Id);
             return new()
             {
                 Succeeded = result,

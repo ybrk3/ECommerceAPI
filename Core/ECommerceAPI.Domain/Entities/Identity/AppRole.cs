@@ -12,6 +12,6 @@ namespace ECommerceAPI.Domain.Entities.Identity
     //This class to be add to db and to be used for role_based_authentication structure
     public class AppRole : IdentityRole<string>
     {
-
+        public ICollection<Endpoint> Endpoints { get; set; }
     }
 }

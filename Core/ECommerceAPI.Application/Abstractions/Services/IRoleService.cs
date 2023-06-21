@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ECommerceAPI.Application.DTOs.Role;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +10,9 @@ namespace ECommerceAPI.Application.Abstractions.Services
     public interface IRoleService
     {
         Task<bool> CreateRole(string name);
-        Task<bool> DeleteRole(string name);
+        Task<bool> DeleteRole(string id);
         Task<bool> UpdateRole(string id,string name);
-        IDictionary<string, string?> GetRoles();
+        ListOrderDto GetRoles(int pageNo, int pageSize);
         Task<(string id,string name)> GetRoleByIdAsync(string id);
     }
 }

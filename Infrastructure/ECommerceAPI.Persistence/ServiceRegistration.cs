@@ -14,10 +14,13 @@ using ECommerceAPI.Persistence.Repositories.File;
 using ECommerceAPI.Persistence.Repositories.Image;
 using ECommerceAPI.Persistence.Repositories.Invoice;
 using ECommerceAPI.Persistence.Services.Authentication;
+using ECommerceAPI.Persistence.Services.Authorization;
 using ECommerceAPI.Persistence.Services.Basket;
 using ECommerceAPI.Persistence.Services.Order;
+using ECommerceAPI.Persistence.Services.Role;
 using ECommerceAPI.Persistence.Services.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -56,14 +59,20 @@ namespace ECommerceAPI.Persistence
             services.AddScoped<IBasketReadRepository, BasketReadRepository>();
             services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
             services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<ICompletedOrderReadRepository,CompletedOrderReadRepository>();
-            services.AddScoped<ICompletedOrderWriteRepository,CompletedOrderWriteRepository>();
+            services.AddScoped<ICompletedOrderReadRepository, CompletedOrderReadRepository>();
+            services.AddScoped<ICompletedOrderWriteRepository, CompletedOrderWriteRepository>();
+            services.AddScoped<IMenuReadRepository, MenuReadRepository>();
+            services.AddScoped<IMenuWriteRepository, MenuWriteRepository>();
+            services.AddScoped<IEndpointReadRepository, EndpointReadRepository>();
+            services.AddScoped<IEndpointWriteRepository, EndpointWriteRepository>();
+            services.AddScoped<IAuthorizationEndpointService, AuthorizationEndpointService>();
 
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IGoogleAuthService, GoogleAuthService>();
             services.AddScoped<IBasketService, BasketService>();
+            services.AddScoped<IRoleService, RoleService>();
         }
     }
 }

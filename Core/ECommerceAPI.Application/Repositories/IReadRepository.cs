@@ -9,5 +9,6 @@ namespace ECommerceAPI.Application.Repositories
         IQueryable<T> GetWhere(Expression<Func<T, bool>> predicate, bool tracking=true);
         Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate, bool tracking = true);
         Task<T> GetByIdAsync(string id, bool tracking = true);
+        Task<bool> Any(Expression<Func<T, bool>> predicate, bool tracking = true);
     }
 }

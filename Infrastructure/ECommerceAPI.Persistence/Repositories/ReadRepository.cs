@@ -52,5 +52,13 @@ namespace ECommerceAPI.Persistence.Repositories
             return await query.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id));//we reached id property through marker base class which is BaseEntity
 
         }
+
+        public async Task<bool> Any(Expression<Func<T, bool>> predicate, bool tracking = true)
+        {
+            IQueryable<T> query = Table.AsQueryable<T>();
+            if(!tracking) query.AsNoTracking();
+
+            return await query.AnyAsync(predicate);
+        }
     }
 }

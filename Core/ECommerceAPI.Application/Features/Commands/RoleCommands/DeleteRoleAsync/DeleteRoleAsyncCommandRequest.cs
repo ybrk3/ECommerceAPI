@@ -4,6 +4,6 @@ namespace ECommerceAPI.Application.Features.Commands.RoleCommands.DeleteRoleAsyn
 {
     public class DeleteRoleAsyncCommandRequest : IRequest<DeleteRoleAsyncCommandResponse>
     {
-        public string Name { get; set; }
+        public string Id { get; set; }
     }
 }

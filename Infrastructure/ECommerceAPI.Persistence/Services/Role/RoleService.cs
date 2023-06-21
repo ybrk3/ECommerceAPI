@@ -1,4 +1,5 @@
 ﻿using ECommerceAPI.Application.Abstractions.Services;
+using ECommerceAPI.Application.DTOs.Role;
 using ECommerceAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -20,13 +21,13 @@ namespace ECommerceAPI.Persistence.Services.Role
 
         public async Task<bool> CreateRole(string name)
         {
-            IdentityResult result = await _roleManager.CreateAsync(new AppRole { Name = name });
+            IdentityResult result = await _roleManager.CreateAsync(new AppRole { Id = Guid.NewGuid().ToString(), Name = name });
             return result.Succeeded && result.Errors.Any();
         }
 
-        public async Task<bool> DeleteRole(string name)
+        public async Task<bool> DeleteRole(string id)
         {
-            IdentityResult result = await _roleManager.DeleteAsync(new AppRole { Name = name });
+            IdentityResult result = await _roleManager.DeleteAsync(new AppRole { Id = id });
             return result.Succeeded && result.Errors.Any();
         }
 
@@ -36,10 +37,32 @@ namespace ECommerceAPI.Persistence.Services.Role
             return (id, role);
         }
 
-        public IDictionary<string, string?> GetRoles()
+        public ListOrderDto GetRoles(int pageNo, int pageSize)
         {
-            return _roleManager.Roles.ToDictionary(role => role.Id, role => role.Name);
+            IQueryable<AppRole> query = _roleManager.Roles;
+            int totalRolesCount = query.Count();
+            object roles;
 
+
+            //if pageNo or pageSize is not minus 1, it will return roles in consideration of pagination info
+            if (pageNo != -1 || pageSize != -1)
+                roles = query.Skip(pageNo * pageSize).Take(pageSize).Select(r => new
+                {
+                    r.Id,
+                    r.Name
+                });
+            else
+                roles = query.Select(r => new
+                {
+                    r.Name,
+                    r.Id
+                });
+
+            return new()
+            {
+                Roles = roles,
+                TotalRolesCount = totalRolesCount,
+            };
         }
 
         public async Task<bool> UpdateRole(string id, string name)
