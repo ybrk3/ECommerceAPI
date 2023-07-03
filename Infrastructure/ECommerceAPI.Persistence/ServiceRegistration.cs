@@ -13,6 +13,7 @@ using ECommerceAPI.Persistence.Repositories.BasketItem;
 using ECommerceAPI.Persistence.Repositories.File;
 using ECommerceAPI.Persistence.Repositories.Image;
 using ECommerceAPI.Persistence.Repositories.Invoice;
+using ECommerceAPI.Persistence.Services;
 using ECommerceAPI.Persistence.Services.Authentication;
 using ECommerceAPI.Persistence.Services.Authorization;
 using ECommerceAPI.Persistence.Services.Basket;
@@ -68,6 +69,7 @@ namespace ECommerceAPI.Persistence
             services.AddScoped<IAuthorizationEndpointService, AuthorizationEndpointService>();
 
 
+            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IGoogleAuthService, GoogleAuthService>();

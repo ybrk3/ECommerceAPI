@@ -7,6 +7,7 @@ using ECommerceAPI.Infrastructure.Services;
 using ECommerceAPI.Infrastructure.Services.Configurations;
 using ECommerceAPI.Infrastructure.Services.Storage;
 using ECommerceAPI.Infrastructure.Services.Token;
+using ECommerceAPI.Persistence.Services.QRCode;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace ECommerceAPI.Infrastructure
             service.AddScoped<ITokenHandler, TokenHandler>();
             service.AddScoped<IMailService,MailService>();
             service.AddScoped<IApplicationService, ApplicationService>();
+            service.AddScoped<IQRCodeService, QRCodeService>();
         }
 
         //T must be Storage class and derived from IStorage (which are LocalStorage, AzureStorage etc.)

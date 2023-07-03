@@ -12,8 +12,16 @@ namespace ECommerceAPI.Application.Abstractions.Services
     {
         Task<CreateUserResponseDTO> CreateAsync(CreateUserDTO model);
         //it will update refresh token
-        Task UpdateRefreshToken(string refreshToken, AppUser user,DateTime accesTokenExpiryDate ,int onAddRefreshTokenTime);
+        Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accesTokenExpiryDate, int onAddRefreshTokenTime);
 
         Task UpdatePassword(string userId, string resetToken, string newPassword);
+
+        Task<List<UsersListDto>> GetUsers(int page, int size);
+        int TotalUsersCount { get; }
+        Task AssingRoleToUser(string userId, string[] roles);
+        Task<string[]> GetUserRoles(string userIdOrName);
+
+        Task<bool> HasRolePermissionToEndpointAsync(string name, string code);
+      
     }
 }

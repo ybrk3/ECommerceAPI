@@ -1,5 +1,6 @@
 ﻿using ECommerceAPI.API.Configurations.ColumnWriters;
 using ECommerceAPI.API.Extensions;
+using ECommerceAPI.API.Filters;
 using ECommerceAPI.Application;
 using ECommerceAPI.Application.Validators.Product;
 using ECommerceAPI.Infrastructure;
@@ -83,7 +84,11 @@ builder.Services.AddHttpLogging(logging =>
 
 
 // Applying created Validation Filter and Fluent Validation (applied to all Validations by giving one of the class in Application layer) and removing default filter approach of ASP .Net Core
-builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>()).AddFluentValidation(configuration => configuration.RegisterValidatorsFromAssemblyContaining<CreateProductValidator>
+builder.Services.AddControllers(options => { 
+    options.Filters.Add<ValidationFilter>();
+    options.Filters.Add<RolePermissionFilter>(); //it's for authorization filter (RolePermissionFilter)
+})
+    ?.AddFluentValidation(configuration => configuration.RegisterValidatorsFromAssemblyContaining<CreateProductValidator>
 ()).ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
 
 

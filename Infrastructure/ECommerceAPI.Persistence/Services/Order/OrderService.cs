@@ -130,7 +130,7 @@ namespace ECommerceAPI.Persistence.Services.Order
         {
             Domain.Entities.Order? order = await _orderReadRepository.Table.Include(o => o.Basket).ThenInclude(b => b.User).FirstOrDefaultAsync(o=> o.Id==Guid.Parse(orderId));
 
-            if (order != null)
+            if (order is not null)
             {
                await _completedOrderWriteRespository.AddAsync(new()
                 {
